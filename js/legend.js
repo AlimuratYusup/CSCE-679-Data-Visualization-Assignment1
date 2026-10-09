@@ -2,7 +2,7 @@
  * legend.js
  * ---------------------------------------------------------------------------
  * Vertical color legend: one swatch per color bin, coldest at the top and
- * hottest at the bottom, with the end values labeled (as in level2.png).
+ * hottest at the bottom, with the end values labeled (as in the Level 2 reference image).
  */
 
 /* global d3 */

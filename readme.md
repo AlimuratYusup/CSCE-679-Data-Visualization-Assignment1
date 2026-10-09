@@ -1,8 +1,6 @@
-# CSCE-679-Data-Visualization-Assignment1
+# Hong Kong Temperature Heatmap (D3.js v7)
 
-## Level 1 & 2 (Basic): [Link](./level1.md)
-
-# Solution: Hong Kong Temperature Heatmap (D3.js v7)
+CSCE 679 Data Visualization, Assignment 1 (Level 1 & Level 2).
 
 | Level 1: Year / Month heatmap | Level 2: heatmap + daily line charts |
 | --- | --- |

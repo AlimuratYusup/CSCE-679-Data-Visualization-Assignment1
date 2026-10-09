@@ -36,7 +36,7 @@
      * reversed so cold = purple/blue and hot = dark red. The scale is a
      * quantize scale (11 equal-width bins); `domain` was calibrated against
      * the reference images so that every cell lands in the exact same color
-     * bin as in level1.png / level2.png.
+     * bin as in the assignment's reference images.
      */
     color: {
       colorCount: 11,
@@ -86,7 +86,7 @@
 
   /**
    * Level 1: Year/Month heatmap of the whole data set.
-   * Cell steps and padding were measured from level1.png.
+   * Cell steps and padding were measured from the Level 1 reference image.
    */
   const LEVEL1_CONFIG = {
     containerSelector: "#chart",
@@ -103,7 +103,7 @@
   /**
    * Level 2: same matrix for the most recent years, with a mini line chart
    * of the daily max/min temperature inside every cell.
-   * Cell steps and padding were measured from level2.png.
+   * Cell steps and padding were measured from the Level 2 reference image.
    */
   const LEVEL2_CONFIG = {
     containerSelector: "#chart",
