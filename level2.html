@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Level 2 · HK Temperature Heatmap</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+  </head>
+  <body>
+    <main class="page">
+      <!-- Header: what the chart shows and how to use it -->
+      <header class="page-header">
+        <p class="eyebrow">CSCE 679 · Assignment 1 · Level 2</p>
+        <h1>Hong Kong Daily Temperature, Month by Month</h1>
+        <p class="subtitle">
+          Last 10 years (<span class="js-year-range">2008 – 2017</span>). Cell color encodes the
+          monthly <strong class="js-mode-label">Maximum</strong> temperature; the mini line chart
+          inside shows how the temperature changed day by day.
+        </p>
+      </header>
+
+      <!-- Controls: max/min toggle plus a key for the two sparkline colors -->
+      <section class="toolbar" aria-label="Chart controls">
+        <div id="mode-toggle" class="mode-toggle"></div>
+        <ul class="line-key" aria-label="Line chart key">
+          <li><span class="line-swatch line-swatch-max"></span>Daily maximum</li>
+          <li><span class="line-swatch line-swatch-min"></span>Daily minimum</li>
+        </ul>
+        <p class="hint">Hover a cell for details · click anywhere on the chart to switch max / min</p>
+      </section>
+
+      <!-- Chart container; the SVG is inserted here by js/heatmap.js -->
+      <section class="chart-card">
+        <div id="chart" class="chart-scroll">
+          <p id="chart-status" class="chart-status">Loading temperature data…</p>
+        </div>
+      </section>
+
+      <footer class="page-footer">
+        <span>Data: daily maximum / minimum temperature in Hong Kong (<code>temperature_daily.csv</code>).</span>
+        <nav class="level-nav">
+          <a href="level1.html">← Level 1</a>
+          <a href="index.html">Overview</a>
+        </nav>
+      </footer>
+    </main>
+
+    <!-- ES modules cannot load from file://, so explain the fix right away. -->
+    <script>
+      if (location.protocol === "file:") {
+        document.getElementById("chart-status").innerHTML =
+          "Please serve this folder with a local web server, e.g. " +
+          "<code>python -m http.server 8000</code>, then open <code>http://localhost:8000/level2.html</code>.";
+        document.getElementById("chart-status").classList.add("is-error");
+      }
+    </script>
+
+    <script type="module">
+      import { LEVEL2_CONFIG } from "./js/config.js";
+      import { renderLevel } from "./js/app.js";
+
+      renderLevel(LEVEL2_CONFIG);
+    </script>
+  </body>
+</html>

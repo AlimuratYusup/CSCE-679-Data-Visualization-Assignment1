@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>HK Temperature Heatmap</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <main class="page page-narrow">
+      <header class="page-header">
+        <p class="eyebrow">CSCE 679 · Data Visualization · Assignment 1</p>
+        <h1>Hong Kong Temperature Heatmap</h1>
+        <p class="subtitle">
+          A Year × Month matrix of Hong Kong temperatures (1997 – 2017), built with D3.js.
+          Choose a level below.
+        </p>
+      </header>
+
+      <!-- One card per level, linking to its page -->
+      <section class="level-cards">
+        <a class="level-card" href="level1.html">
+          <img src="screenshots/level1.png" alt="Level 1 heatmap screenshot" />
+          <div class="level-card-body">
+            <p class="eyebrow">Level 1</p>
+            <h2>Year / Month Heatmap</h2>
+            <p>Monthly maximum or minimum temperature for every month, 1997 – 2017. Click to switch, hover for values.</p>
+          </div>
+        </a>
+        <a class="level-card" href="level2.html">
+          <img src="screenshots/level2.png" alt="Level 2 heatmap with mini line charts screenshot" />
+          <div class="level-card-body">
+            <p class="eyebrow">Level 2</p>
+            <h2>Heatmap + Daily Line Charts</h2>
+            <p>Last 10 years, with a mini line chart of daily max and min temperature inside every cell.</p>
+          </div>
+        </a>
+      </section>
+
+      <footer class="page-footer">
+        <span>Run locally with <code>python -m http.server 8000</code> and open <code>http://localhost:8000</code>.</span>
+      </footer>
+    </main>
+  </body>
+</html>

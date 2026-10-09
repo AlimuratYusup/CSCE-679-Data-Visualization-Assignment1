@@ -1,0 +1,264 @@
+/* ==========================================================================
+   style.css
+   Page shell around the charts. Colors that encode data (cell colors,
+   sparkline colors) live in js/config.js, not here; this file only styles
+   the page, the axes, the tooltip and the controls.
+   ========================================================================== */
+
+/* ---- Design tokens ------------------------------------------------------- */
+:root {
+  --color-page: #f6f7f9;
+  --color-card: #ffffff;
+  --color-border: #e4e7ec;
+  --color-text: #1f2328;
+  --color-text-muted: #5b6370;
+  --color-accent: #b4233c;         /* deep red taken from the hot end of the scale */
+  --color-error-bg: #fdecee;
+
+  /* Sparkline key swatches; overwritten from js/config.js at runtime */
+  --line-max: #31a354;
+  --line-min: #9ecae1;
+
+  --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --radius-card: 14px;
+  --radius-control: 999px;
+  --shadow-card: 0 1px 2px rgb(16 24 40 / 0.04), 0 8px 24px rgb(16 24 40 / 0.06);
+  --page-gutter: 16px;
+}
+
+/* ---- Base ---------------------------------------------------------------- */
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--color-page);
+  color: var(--color-text);
+  font-family: var(--font-sans);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.9em;
+  background: #eef0f3;
+  padding: 0.1em 0.35em;
+  border-radius: 4px;
+}
+
+/* ---- Page layout ---------------------------------------------------------- */
+.page {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 40px var(--page-gutter) 32px;
+}
+
+.page-narrow { max-width: 980px; }
+
+.page-header { margin-bottom: 20px; }
+
+.eyebrow {
+  margin: 0 0 6px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+}
+
+h1 {
+  margin: 0 0 8px;
+  font-size: clamp(24px, 3.2vw, 34px);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.subtitle {
+  margin: 0;
+  max-width: 760px;
+  color: var(--color-text-muted);
+  font-size: 15px;
+}
+
+.subtitle strong { color: var(--color-text); }
+
+/* ---- Toolbar: toggle, line key, hint -------------------------------------- */
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 20px;
+  margin-bottom: 16px;
+}
+
+.mode-toggle {
+  display: inline-flex;
+  padding: 3px;
+  background: #e9ecf0;
+  border-radius: var(--radius-control);
+}
+
+.mode-button {
+  border: 0;
+  background: transparent;
+  color: var(--color-text-muted);
+  font: 500 14px var(--font-sans);
+  padding: 6px 16px;
+  border-radius: var(--radius-control);
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+}
+
+.mode-button:hover { color: var(--color-text); }
+
+.mode-button.is-active {
+  background: var(--color-card);
+  color: var(--color-text);
+  box-shadow: 0 1px 3px rgb(16 24 40 / 0.12);
+}
+
+.mode-button:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+.line-key {
+  display: flex;
+  gap: 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 13px;
+  color: var(--color-text-muted);
+}
+
+.line-key li { display: inline-flex; align-items: center; gap: 6px; }
+
+.line-swatch {
+  display: inline-block;
+  width: 18px;
+  height: 3px;
+  border-radius: 2px;
+}
+
+.line-swatch-max { background: var(--line-max); }
+.line-swatch-min { background: var(--line-min); }
+
+.hint {
+  margin: 0;
+  font-size: 13px;
+  color: var(--color-text-muted);
+}
+
+/* ---- Chart card ------------------------------------------------------------ */
+.chart-card {
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+  padding: 20px 16px;
+}
+
+/* Safety net: never let the chart widen the page itself. */
+.chart-scroll { overflow-x: auto; }
+
+.heatmap {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin: 0 auto;
+  cursor: pointer;
+  user-select: none;
+}
+
+.heatmap .axis {
+  font-family: var(--font-sans);
+  color: var(--color-text);
+}
+
+.heatmap .legend-label {
+  font-family: var(--font-sans);
+  fill: var(--color-text);
+}
+
+.chart-status {
+  margin: 24px 8px;
+  color: var(--color-text-muted);
+}
+
+.chart-status.is-error {
+  padding: 12px 14px;
+  border-radius: 8px;
+  background: var(--color-error-bg);
+  color: var(--color-text);
+}
+
+/* ---- Tooltip --------------------------------------------------------------- */
+.tooltip {
+  position: fixed;
+  z-index: 10;
+  pointer-events: none;
+  padding: 7px 10px;
+  background: #ffffff;
+  color: #000000;
+  font: 500 12px var(--font-sans);
+  white-space: nowrap;
+  border-radius: 6px;
+  box-shadow: 0 4px 16px rgb(16 24 40 / 0.16);
+  transition: opacity 0.12s;
+}
+
+/* ---- Footer ---------------------------------------------------------------- */
+.page-footer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 8px 20px;
+  margin-top: 20px;
+  font-size: 13px;
+  color: var(--color-text-muted);
+}
+
+.level-nav { display: flex; gap: 16px; }
+
+.level-nav a,
+.level-card { color: var(--color-text); }
+
+.level-nav a { font-weight: 500; text-decoration: none; }
+.level-nav a:hover { color: var(--color-accent); }
+
+/* ---- Landing page cards ---------------------------------------------------- */
+.level-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.level-card {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  text-decoration: none;
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.level-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 2px 4px rgb(16 24 40 / 0.06), 0 16px 32px rgb(16 24 40 / 0.1);
+}
+
+.level-card img {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  object-position: top left;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.level-card-body { padding: 16px 18px 20px; }
+.level-card-body h2 { margin: 0 0 6px; font-size: 18px; }
+.level-card-body p:last-child { margin: 0; font-size: 14px; color: var(--color-text-muted); }

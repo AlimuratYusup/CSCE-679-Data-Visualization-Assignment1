@@ -1,0 +1,107 @@
+/**
+ * data.js
+ * ---------------------------------------------------------------------------
+ * Loading and shaping of the temperature data. Nothing here draws anything:
+ * the functions only turn the raw daily CSV rows into one record per
+ * (year, month) that the chart modules can render directly.
+ *
+ * Monthly record shape:
+ * {
+ *   year: 2002,
+ *   month: 3,                 // 1 = January ... 12 = December
+ *   maxTemperature: 28,       // highest daily maximum in that month
+ *   minTemperature: 14,       // lowest daily minimum in that month
+ *   days: [{ day: 1, maxTemperature: 27, minTemperature: 21 }, ...]
+ * }
+ */
+
+/* global d3 */
+
+/**
+ * Read the CSV and convert every row into a typed daily record.
+ * @param {object} sharedConfig  SHARED_CONFIG from config.js
+ * @returns {Promise<Array<{date: Date, maxTemperature: number, minTemperature: number}>>}
+ */
+export async function loadDailyTemperatures(sharedConfig) {
+  const { columns } = sharedConfig;
+  const parseDate = d3.timeParse("%Y-%m-%d");
+
+  return d3.csv(sharedConfig.dataUrl, (row) => ({
+    date: parseDate(row[columns.date]),
+    maxTemperature: +row[columns.maxTemperature],
+    minTemperature: +row[columns.minTemperature],
+  }));
+}
+
+/**
+ * Group daily records by year and month and compute the monthly extremes.
+ * @param {Array} dailyRecords  output of loadDailyTemperatures
+ * @returns {Array} monthly records sorted by year, then month
+ */
+export function aggregateByMonth(dailyRecords) {
+  // d3.rollups -> [[year, [[month, monthRecord], ...]], ...]
+  const groupedByYearMonth = d3.rollups(
+    dailyRecords,
+    (daysInMonth) => buildMonthRecord(daysInMonth),
+    (record) => record.date.getFullYear(),
+    (record) => record.date.getMonth() + 1,
+  );
+
+  return groupedByYearMonth
+    .flatMap(([, months]) => months.map(([, monthRecord]) => monthRecord))
+    .sort((a, b) => a.year - b.year || a.month - b.month);
+}
+
+/**
+ * Build one monthly record from all daily records of the same month.
+ * @param {Array} daysInMonth  daily records sharing one year and month
+ */
+function buildMonthRecord(daysInMonth) {
+  const firstDate = daysInMonth[0].date;
+  const days = daysInMonth
+    .map((record) => ({
+      day: record.date.getDate(),
+      maxTemperature: record.maxTemperature,
+      minTemperature: record.minTemperature,
+    }))
+    .sort((a, b) => a.day - b.day);
+
+  return {
+    year: firstDate.getFullYear(),
+    month: firstDate.getMonth() + 1,
+    maxTemperature: d3.max(days, (d) => d.maxTemperature),
+    minTemperature: d3.min(days, (d) => d.minTemperature),
+    days,
+  };
+}
+
+/**
+ * Keep only the most recent `yearCount` years of monthly records.
+ * Passing null/undefined returns the records unchanged (all years).
+ * @param {Array} monthlyRecords
+ * @param {number|null} yearCount
+ */
+export function filterRecentYears(monthlyRecords, yearCount) {
+  if (!yearCount) return monthlyRecords;
+  const lastYear = d3.max(monthlyRecords, (d) => d.year);
+  const firstYearShown = lastYear - yearCount + 1;
+  return monthlyRecords.filter((d) => d.year >= firstYearShown);
+}
+
+/**
+ * Sorted list of the distinct years present in the monthly records.
+ * @param {Array} monthlyRecords
+ * @returns {number[]}
+ */
+export function listYears(monthlyRecords) {
+  return Array.from(new Set(monthlyRecords.map((d) => d.year))).sort((a, b) => a - b);
+}
+
+/**
+ * Value shown for a monthly record in the given mode.
+ * @param {object} monthRecord
+ * @param {"max"|"min"} mode
+ */
+export function temperatureForMode(monthRecord, mode) {
+  return mode === "max" ? monthRecord.maxTemperature : monthRecord.minTemperature;
+}
