@@ -8,44 +8,51 @@
 
 /* global d3 */
 
-/**
- * Build the toggle buttons inside `containerSelector`.
- * @param {string} containerSelector  CSS selector of the toggle container
- * @param {object} modeLabels         SHARED_CONFIG.modeLabels ({max: "...", min: "..."})
- * @param {string} initialMode        mode selected on load
- * @param {Function} onSelect         called with "max" or "min" when a button is clicked
- * @returns {{setActive: Function}}   call setActive(mode) to sync the buttons
- */
-export function createModeToggle(containerSelector, modeLabels, initialMode, onSelect) {
-  const container = d3
-    .select(containerSelector)
-    .attr("role", "group")
-    .attr("aria-label", "Temperature shown in the cells");
+(function (TemperatureHeatmap) {
+  "use strict";
 
-  const buttons = container
-    .selectAll("button")
-    .data(Object.keys(modeLabels))
-    .join("button")
-    .attr("type", "button")
-    .attr("class", "mode-button")
-    .text((mode) => modeLabels[mode])
-    .on("click", (_, mode) => onSelect(mode));
+  /**
+   * Build the toggle buttons inside `containerSelector`.
+   * @param {string} containerSelector  CSS selector of the toggle container
+   * @param {object} modeLabels         SHARED_CONFIG.modeLabels ({max: "...", min: "..."})
+   * @param {string} initialMode        mode selected on load
+   * @param {Function} onSelect         called with "max" or "min" when a button is clicked
+   * @returns {{setActive: Function}}   call setActive(mode) to sync the buttons
+   */
+  function createModeToggle(containerSelector, modeLabels, initialMode, onSelect) {
+    const container = d3
+      .select(containerSelector)
+      .attr("role", "group")
+      .attr("aria-label", "Temperature shown in the cells");
 
-  /** Highlight the button of the active mode. */
-  function setActive(activeMode) {
-    buttons
-      .classed("is-active", (mode) => mode === activeMode)
-      .attr("aria-pressed", (mode) => String(mode === activeMode));
+    const buttons = container
+      .selectAll("button")
+      .data(Object.keys(modeLabels))
+      .join("button")
+      .attr("type", "button")
+      .attr("class", "mode-button")
+      .text((mode) => modeLabels[mode])
+      .on("click", (_, mode) => onSelect(mode));
+
+    /** Highlight the button of the active mode. */
+    function setActive(activeMode) {
+      buttons
+        .classed("is-active", (mode) => mode === activeMode)
+        .attr("aria-pressed", (mode) => String(mode === activeMode));
+    }
+
+    setActive(initialMode);
+    return { setActive };
   }
 
-  setActive(initialMode);
-  return { setActive };
-}
+  /**
+   * Write the active mode into every element matching `selector`
+   * (e.g. the subtitle "Showing monthly Maximum temperature").
+   */
+  function showModeLabel(selector, modeLabels, mode) {
+    d3.selectAll(selector).text(modeLabels[mode]);
+  }
 
-/**
- * Write the active mode into every element matching `selector`
- * (e.g. the subtitle "Showing monthly Maximum temperature").
- */
-export function showModeLabel(selector, modeLabels, mode) {
-  d3.selectAll(selector).text(modeLabels[mode]);
-}
+  // Make this file's public functions available to the other scripts.
+  Object.assign(TemperatureHeatmap, { createModeToggle, showModeLabel });
+})((window.TemperatureHeatmap = window.TemperatureHeatmap || {}));

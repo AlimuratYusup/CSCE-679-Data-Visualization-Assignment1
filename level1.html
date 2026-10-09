@@ -11,7 +11,6 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="css/style.css" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
   </head>
   <body>
     <main class="page">
@@ -47,21 +46,23 @@
       </footer>
     </main>
 
-    <!-- ES modules cannot load from file://, so explain the fix right away. -->
+    <!--
+      Plain <script> tags (not ES modules) so the page also works when the
+      HTML file is opened directly from disk. Order matters: each file uses
+      the functions registered by the files above it.
+    -->
+    <script src="js/vendor/d3.v7.9.0.min.js"></script>
+    <script src="js/temperature-data.js"></script>
+    <script src="js/config.js"></script>
+    <script src="js/data.js"></script>
+    <script src="js/tooltip.js"></script>
+    <script src="js/legend.js"></script>
+    <script src="js/sparkline.js"></script>
+    <script src="js/heatmap.js"></script>
+    <script src="js/controls.js"></script>
+    <script src="js/app.js"></script>
     <script>
-      if (location.protocol === "file:") {
-        document.getElementById("chart-status").innerHTML =
-          "Please serve this folder with a local web server, e.g. " +
-          "<code>python -m http.server 8000</code>, then open <code>http://localhost:8000/level1.html</code>.";
-        document.getElementById("chart-status").classList.add("is-error");
-      }
-    </script>
-
-    <script type="module">
-      import { LEVEL1_CONFIG } from "./js/config.js";
-      import { renderLevel } from "./js/app.js";
-
-      renderLevel(LEVEL1_CONFIG);
+      TemperatureHeatmap.renderLevel(TemperatureHeatmap.LEVEL1_CONFIG);
     </script>
   </body>
 </html>

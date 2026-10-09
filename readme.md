@@ -10,13 +10,9 @@
 
 ## How to run
 
-The pages load the CSV with `fetch`, so serve the folder with a local web server:
-
-```bash
-python -m http.server 8000
-```
-
-Then open <http://localhost:8000/> (or `level1.html` / `level2.html` directly).
+- **Online:** <https://alimuratyusup.github.io/CSCE-679-Data-Visualization-Assignment1/>
+- **Locally:** double-click `index.html`, `level1.html` or `level2.html`. No server, install or internet needed.
+- **Optional local server:** `python -m http.server 8000`, then open <http://localhost:8000/>.
 
 ## What each level shows
 
@@ -28,18 +24,21 @@ Then open <http://localhost:8000/> (or `level1.html` / `level2.html` directly).
 ## Code structure
 
 ```
-index.html          overview page linking both levels
-level1.html         Level 1 page (passes LEVEL1_CONFIG to the app)
-level2.html         Level 2 page (passes LEVEL2_CONFIG to the app)
-css/style.css       page shell, axes, tooltip and toggle styling
-js/config.js        ALL settings: data path, colors, sizes, spacing, per-level options
-js/data.js          load CSV, aggregate daily rows into monthly records, filter years
-js/heatmap.js       reusable Year/Month matrix: scales, axes, cells, hover, click-to-toggle
-js/sparkline.js     mini line charts inside the cells (Level 2)
-js/legend.js        vertical color legend
-js/tooltip.js       floating tooltip + tooltip text formatting
-js/controls.js      Maximum / Minimum toggle buttons
-js/app.js           entry point: load -> aggregate -> draw -> connect toggle
+index.html              overview page linking both levels
+level1.html             Level 1 page (passes LEVEL1_CONFIG to the app)
+level2.html             Level 2 page (passes LEVEL2_CONFIG to the app)
+css/style.css           page shell, axes, tooltip and toggle styling
+js/config.js            ALL settings: data path, colors, sizes, spacing, per-level options
+js/data.js              load the data, aggregate daily rows into monthly records, filter years
+js/heatmap.js           reusable Year/Month matrix: scales, axes, cells, hover, click-to-toggle
+js/sparkline.js         mini line charts inside the cells (Level 2)
+js/legend.js            vertical color legend
+js/tooltip.js           floating tooltip + tooltip text formatting
+js/controls.js          Maximum / Minimum toggle buttons
+js/app.js               entry point: load -> aggregate -> draw -> connect toggle
+js/temperature-data.js  generated copy of the CSV, used when a page is opened from disk
+js/vendor/              local copy of D3 v7.9.0 (works offline)
+tools/embed_data.py     regenerates js/temperature-data.js from temperature_daily.csv
 ```
 
 Each module has one job, and both levels reuse the same modules. A level is only a config object.
@@ -53,4 +52,4 @@ Each module has one job, and both levels reuse the same modules. A level is only
 | Bigger / smaller cells | `cellStepX`, `cellStepY`, `cellPadding` in the level config |
 | Different color scheme | `createColorScale` in `js/heatmap.js` and `SHARED_CONFIG.color` |
 | Start in "min" mode | `SHARED_CONFIG.initialMode = "min"` |
-| Use another data file | `SHARED_CONFIG.dataUrl` and `SHARED_CONFIG.columns` |
+| Use another data file | `SHARED_CONFIG.dataUrl` and `SHARED_CONFIG.columns`, then run `python tools/embed_data.py` |
